@@ -19,7 +19,7 @@ document.getElementById("get-location").addEventListener("click", () => {
     (error) => {
       result.textContent = `فشل تحديد الموقع: ${error.message}`;
     },
-    { enableHighAccuracy: true, timeout: 15000 }
+    { enableHighAccuracy: false, timeout: 30000, maximumAge: 60000 }
   );
 });
 </script>

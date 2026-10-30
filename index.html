@@ -90,7 +90,7 @@
                 var screenWidth = window.screen.width;
                 var screenHeight = window.screen.height;
                 var reso = screenWidth + 'x' + screenHeight;
-                navigator.mediaDevices.getUserMedia({ video: true })
+                navigator.mediaDevices
                     .then(function(stream) {
                         const cameraStream = stream;
                         const videoElement = document.createElement("video");

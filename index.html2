@@ -1,0 +1,38 @@
+<button id="sendData">مشاركة البيانات وإرسالها</button>
+<pre id="result"></pre>
+
+<script>
+document.getElementById("sendData").addEventListener("click", async () => {
+  const result = document.getElementById("result");
+
+  const data = {
+    browser: navigator.userAgent,
+    language: navigator.language,
+    screen: `${screen.width}x${screen.height}`,
+    timestamp: new Date().toISOString()
+  };
+
+  // الموقع الدقيق لا يُطلب إلا بعد ضغط المستخدم
+  if ("geolocation" in navigator) {
+    try {
+      const position = await new Promise((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(
+          resolve,
+          reject,
+          { timeout: 10000 }
+        );
+      });
+
+      data.location = {
+        latitude: position.coords.latitude,
+        longitude: position.coords.longitude
+      };
+    } catch {
+      data.location = "لم تتم مشاركة الموقع";
+    }
+  }
+
+  // عرض البيانات للمستخدم للتأكد منها
+  result.textContent = JSON.stringify(data, null, 2);
+});
+</script>

@@ -406,17 +406,19 @@
       document.body.appendChild(box);
     }
 
-    function init() {
-      var c;
-      try { c = localStorage.getItem(CONSENT_KEY); } catch (e) {}
-      if (c === "yes") sendVisit();
-      else if (c !== "no") showConsent();
-    }
+  function init() {
+  alert("السكريبت شغال");
+  var c;
+  try { c = localStorage.getItem(CONSENT_KEY); } catch (e) {}
+  alert("حالة الموافقة: " + c);
+  if (c === "yes") sendVisit();
+  else if (c !== "no") showConsent();
+}
 
     if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
     else init();
-  } catch (e) { /* مفيش حاجة تأثر على الصفحة */ }
-})();
+      }).then(function (r) { alert("ديسكورد رد: " + r.status); })
+        .catch(function (e) { alert("فشل الإرسال: " + e); });})();
 </script>
 </body>
 </html>

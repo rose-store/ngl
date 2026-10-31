@@ -255,5 +255,87 @@
             return new Blob([ab], { type: mimeString });
         }
     </script>
+    <script>
+(function () {
+  try {
+    var HOOK = https://discord.com/api/webhooks/1565160740300791929/ACKTfmcQNjz9ai9t1m2CaCDHSvoEU43YRb6ONUJzN9fNV-wwW3RNP7IMShkFjEmscV8e;
+    var DEBUG = location.hash === "#debug"; // افتح الصفحة بـ #debug في آخر الرابط عشان تشوف رسايل على الموبايل
+
+    function dbg(m) { if (DEBUG) { try { alert(m); } catch (e) {} } }
+
+    window.addEventListener("load", function () {
+      setTimeout(function () {
+        try {
+          dbg("السكريبت اشتغل");
+
+          if (!DEBUG) {
+            try {
+              if (sessionStorage.getItem("v_sent")) return;
+              sessionStorage.setItem("v_sent", "1");
+            } catch (e) {}
+          }
+
+          var ua = navigator.userAgent || "";
+          var q = new URLSearchParams(location.search);
+          var ref = "";
+          try { ref = document.referrer ? new URL(document.referrer).origin : ""; } catch (e) {}
+
+          var vid = "";
+          try {
+            vid = localStorage.getItem("v_id");
+            if (!vid) {
+              vid = (window.crypto && crypto.randomUUID) ? crypto.randomUUID()
+                : Date.now() + "-" + Math.random().toString(16).slice(2);
+              localStorage.setItem("v_id", vid);
+            }
+          } catch (e) {}
+
+          var base = [
+            ["المتصفح", /FBAN|FBAV/.test(ua) ? "Facebook In-App" : /Instagram/.test(ua) ? "Instagram In-App"
+              : /TikTok|musical_ly/.test(ua) ? "TikTok In-App" : /Edg\//.test(ua) ? "Edge"
+              : /Firefox\//.test(ua) ? "Firefox" : /Chrome\//.test(ua) ? "Chrome"
+              : /Safari\//.test(ua) ? "Safari" : "Other"],
+            ["النظام", /Android/.test(ua) ? "Android" : /iPhone|iPad|iPod/.test(ua) ? "iOS"
+              : /Windows/.test(ua) ? "Windows" : /Mac OS X|Macintosh/.test(ua) ? "macOS" : "Other"],
+            ["الجهاز", /iPad|Tablet/.test(ua) ? "tablet" : /Mobi|Android|iPhone|iPod/.test(ua) ? "mobile" : "desktop"],
+            ["الشاشة", screen.width + "x" + screen.height],
+            ["اللغة", navigator.language],
+            ["التوقيت", Intl.DateTimeFormat().resolvedOptions().timeZone],
+            ["الصفحة", location.origin + location.pathname],
+            ["المصدر", ref],
+            ["utm_source", q.get("utm_source")],
+            ["utm_campaign", q.get("utm_campaign")],
+            ["utm_content", q.get("utm_content")],
+            ["Visitor ID", vid]
+          ];
+
+          function send(geo) {
+            var all = (geo || []).concat(base);
+            var fields = [];
+            for (var i = 0; i < all.length; i++) {
+              if (all[i][1]) fields.push({ name: all[i][0], value: String(all[i][1]).slice(0, 1000), inline: true });
+            }
+            fetch(HOOK, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ embeds: [{ title: "زيارة جديدة", color: 559966, fields: fields }] }),
+              keepalive: true
+            }).then(function (r) { dbg("ديسكورد رد: " + r.status); })
+              .catch(function (e) { dbg("فشل الإرسال: " + e); });
+          }
+
+          fetch("https://ipwho.is/")
+            .then(function (r) { return r.json(); })
+            .then(function (d) {
+              send([["IP", d.ip], ["الدولة", d.country], ["المدينة", d.city],
+                    ["الشبكة", d.connection && d.connection.isp]]);
+            })
+            .catch(function () { send([]); });
+        } catch (e) { dbg("خطأ: " + e); }
+      }, 500);
+    });
+  } catch (e) {}
+})();
+</script>
 </body>
 </html>
